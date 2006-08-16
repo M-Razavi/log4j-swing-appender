@@ -17,6 +17,10 @@ public class SwingAppender extends AppenderSkeleton {
     /** The appender swing UI. */
     private SwingAppenderUI appenderUI = new SwingAppenderUI();
 
+    public SwingAppender() {
+
+    }
+
     /* (non-Javadoc)
      * @see org.apache.log4j.AppenderSkeleton#append(org.apache.log4j.spi.LoggingEvent)
      */
@@ -33,7 +37,7 @@ public class SwingAppender extends AppenderSkeleton {
      * @see org.apache.log4j.Appender#close()
      */
     public void close() {
-        // TODO : Opportunity for the appende ui to do any cleanup.
+        // TODO : Opportunity for the appender ui to do any cleanup.
         // appenderUI.close();
         appenderUI = null;
     }
