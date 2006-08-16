@@ -94,6 +94,7 @@ public class SwingAppenderUI {
 	/**creates a panel to hold the buttons
 	 */
 	private void initButtonsPanel() {
+		// TODO: Add clear button to clear the log statements.
 		buttonsPanel = new JPanel();
 		startPause = new JButton(PAUSE);
 		startPause.addActionListener(new StartPauseActionListener());
@@ -139,5 +140,10 @@ public class SwingAppenderUI {
 				srcButton.setText(START);
 			}
 		}
+	}
+	
+	public void close() {
+		// clean up code for UI goes here. 
+		jframe.setVisible(false);
 	}
 }

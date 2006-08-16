@@ -4,6 +4,7 @@
 package com.omniscient.log4jcontrib.swingappender;
 
 import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.Layout;
 import org.apache.log4j.spi.LoggingEvent;
 
 import com.omniscient.log4jcontrib.swingappender.ui.SwingAppenderUI;
@@ -18,27 +19,40 @@ public class SwingAppender extends AppenderSkeleton {
     private SwingAppenderUI appenderUI = new SwingAppenderUI();
 
     public SwingAppender() {
-
+    	System.out.println("Created instance of SwingAppender.");
     }
 
     /* (non-Javadoc)
      * @see org.apache.log4j.AppenderSkeleton#append(org.apache.log4j.spi.LoggingEvent)
      */
     protected void append(LoggingEvent event) {
+    	System.out.println("Entering Append");
         if (performChecks()) {
+        	System.out.println("PerformChecks() ");	
             String logOutput = this.layout.format(event);
-            // TODO : Need to add some Throwable specific
-            //        stuff as in WriteAppender class.
             appenderUI.doLog(logOutput);
+
+            if (layout.ignoresThrowable()) {
+				String[] lines = event.getThrowableStrRep();
+				if (lines != null) {
+					int len = lines.length;
+					for (int i = 0; i < len; i++) {
+						appenderUI.doLog(lines[i]);
+						appenderUI.doLog(Layout.LINE_SEP);
+					}
+				}
+			}
         }
     }
 
-    /* (non-Javadoc)
-     * @see org.apache.log4j.Appender#close()
-     */
+    /*
+	 * (non-Javadoc)
+	 * 
+	 * @see org.apache.log4j.Appender#close()
+	 */
     public void close() {
-        // TODO : Opportunity for the appender ui to do any cleanup.
-        // appenderUI.close();
+        //Opportunity for the appender ui to do any cleanup.
+        appenderUI.close();
         appenderUI = null;
     }
 
@@ -55,6 +69,6 @@ public class SwingAppender extends AppenderSkeleton {
      * @return
      */
     private boolean performChecks() {
-        return appenderUI != null;
+        return !closed && layout != null; 
     }
 }
