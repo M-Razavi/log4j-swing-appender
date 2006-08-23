@@ -26,6 +26,10 @@ public class SwingAppenderUI {
 	private JFrame jframe;
 	private JButton startPause;
 	private JButton stop;
+    /**
+     * Button to clear off the textArea
+     */
+    private JButton clear;
 	private JPanel buttonsPanel;
 	private JTextArea logMessagesDisp;
 	private JScrollPane scrollPane;
@@ -38,6 +42,7 @@ public class SwingAppenderUI {
 	public static final String START = "start";
 	public static final String PAUSE = "pause";
 	public static final String STOP = "stop";
+    public static final String CLEAR = "clear";
 	public static final int STARTED = 0;
 	public static final int PAUSED = 1;
 	public static final int STOPPED = 2;
@@ -81,6 +86,8 @@ public class SwingAppenderUI {
 				}
 			}
 			logMessagesDisp.append(log+"\n");
+            //Code to set the scrollbar always at the bottom 
+            logMessagesDisp.setCaretPosition(logMessagesDisp.getText().length());
 		}
 		else if(appState == PAUSED){
 			System.out.println("Sending log msg to buffer");
@@ -105,8 +112,15 @@ public class SwingAppenderUI {
 				startPause.setText(START);
 			}
 		});
+        clear = new JButton(CLEAR);
+        clear.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                logMessagesDisp.setText("");
+            }
+        });
 		buttonsPanel.add(startPause);
 		buttonsPanel.add(stop);
+        buttonsPanel.add(clear);
 	}
 
 	/**Creates a scrollable text area
