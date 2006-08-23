@@ -87,7 +87,7 @@ public class SwingAppenderUI {
 			logBuffer.add(log);
 		}
 		else {
-			System.out.println("Not acceptind any log statements");
+			System.out.println("Not accepting any log statements");
 		}
 	}
 	
