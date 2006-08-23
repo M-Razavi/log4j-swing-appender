@@ -19,16 +19,14 @@ public class SwingAppender extends AppenderSkeleton {
     private SwingAppenderUI appenderUI = new SwingAppenderUI();
 
     public SwingAppender() {
-    	System.out.println("Created instance of SwingAppender.");
+
     }
 
     /* (non-Javadoc)
      * @see org.apache.log4j.AppenderSkeleton#append(org.apache.log4j.spi.LoggingEvent)
      */
     protected void append(LoggingEvent event) {
-    	System.out.println("Entering Append");
         if (performChecks()) {
-        	System.out.println("PerformChecks() ");	
             String logOutput = this.layout.format(event);
             appenderUI.doLog(logOutput);
 
