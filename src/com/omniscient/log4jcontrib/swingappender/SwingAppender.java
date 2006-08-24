@@ -27,20 +27,21 @@ public class SwingAppender extends AppenderSkeleton {
      */
     protected void append(LoggingEvent event) {
         if (performChecks()) {
-            String logOutput = this.layout.format(event);
-            appenderUI.doLog(logOutput);
+        	return;
+        }
+        String logOutput = this.layout.format(event);
+        appenderUI.doLog(logOutput);
 
-            if (layout.ignoresThrowable()) {
-				String[] lines = event.getThrowableStrRep();
-				if (lines != null) {
-					int len = lines.length;
-					for (int i = 0; i < len; i++) {
-						appenderUI.doLog(lines[i]);
-						appenderUI.doLog(Layout.LINE_SEP);
-					}
+        if (layout.ignoresThrowable()) {
+        	String[] lines = event.getThrowableStrRep();
+			if (lines != null) {
+				int len = lines.length;
+				for (int i = 0; i < len; i++) {
+					appenderUI.doLog(lines[i]);
+					appenderUI.doLog(Layout.LINE_SEP);
 				}
 			}
-        }
+		}
     }
 
     /*
