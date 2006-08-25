@@ -19,14 +19,14 @@ public class SwingAppender extends AppenderSkeleton {
     private SwingAppenderUI appenderUI = new SwingAppenderUI();
 
     public SwingAppender() {
-
+    	
     }
 
     /* (non-Javadoc)
      * @see org.apache.log4j.AppenderSkeleton#append(org.apache.log4j.spi.LoggingEvent)
      */
     protected void append(LoggingEvent event) {
-        if (performChecks()) {
+        if (!performChecks()) {
         	return;
         }
         String logOutput = this.layout.format(event);
