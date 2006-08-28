@@ -46,10 +46,26 @@ public class SwingAppenderUI {
 	public static final int STARTED = 0;
 	public static final int PAUSED = 1;
 	public static final int STOPPED = 2;
-	
+
+    /**
+     * a instance for SwingAppenderUI class
+     */
+    private static SwingAppenderUI instance;
+
+    /**
+     * method to get an instance of the this class
+     * @return
+     */
+    public static SwingAppenderUI getInstance() {
+        if (instance == null) {
+            instance = new SwingAppenderUI();
+        }
+        return instance;
+    }
+    
 	/**Initializes the object
 	 */
-	public SwingAppenderUI() {
+	private SwingAppenderUI() {
 		//set internal attributes
 		logBuffer = new ArrayList();
 		appState = STARTED;
