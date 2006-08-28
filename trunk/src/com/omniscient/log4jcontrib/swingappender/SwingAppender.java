@@ -16,10 +16,9 @@ import com.omniscient.log4jcontrib.swingappender.ui.SwingAppenderUI;
 public class SwingAppender extends AppenderSkeleton {
 
     /** The appender swing UI. */
-    private SwingAppenderUI appenderUI = new SwingAppenderUI();
+    private SwingAppenderUI appenderUI = SwingAppenderUI.getInstance();
 
     public SwingAppender() {
-    	
     }
 
     /* (non-Javadoc)
@@ -51,8 +50,8 @@ public class SwingAppender extends AppenderSkeleton {
 	 */
     public void close() {
         //Opportunity for the appender ui to do any cleanup.
-        appenderUI.close();
-        appenderUI = null;
+        /*appenderUI.close();
+        appenderUI = null;*/
     }
 
     /* (non-Javadoc)

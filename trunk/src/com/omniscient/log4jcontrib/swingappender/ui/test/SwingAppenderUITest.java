@@ -15,7 +15,7 @@ public class SwingAppenderUITest {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-		SwingAppenderUI loggerWin = new SwingAppenderUI();
+		SwingAppenderUI loggerWin = SwingAppenderUI.getInstance();
 		//test
 		for(int i=0;;i++) {
 			try {Thread.sleep(100);} catch(InterruptedException ie) {}
