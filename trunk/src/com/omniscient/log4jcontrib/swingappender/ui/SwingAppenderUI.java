@@ -24,18 +24,15 @@ import javax.swing.ScrollPaneConstants;
 public class SwingAppenderUI {
 	//UI attributes
 	private JFrame jframe;
-	private JButton startPause;
-	private JButton stop;
-    /**
-     * Button to clear off the textArea
-     */
-    private JButton clear;
-	private JPanel buttonsPanel;
-	private JTextArea logMessagesDisp;
+	private JButton startPause; //button for start/pause - toggles
+	private JButton stop; //stop button
+    private JButton clear; //button to clear the text area
+	private JPanel buttonsPanel; //panel to hold all buttons
+	private JTextArea logMessagesDisp; //display area
 	private JScrollPane scrollPane;
 	//buffer to hold log statements when the UI is set to PAUSE
 	private List logBuffer; 
-	/**flag to indicate if we should display new log events */
+	//flag to indicate if we should display new log events
 	private int appState;
 
 	/* Constants */
@@ -48,22 +45,29 @@ public class SwingAppenderUI {
 	public static final int STOPPED = 2;
 
     /**
-     * a instance for SwingAppenderUI class
+     * An instance for SwingAppenderUI class. This holds the Singleton.
      */
     private static SwingAppenderUI instance;
 
     /**
-     * method to get an instance of the this class
-     * @return
+     * Method to get an instance of the this class. This method ensures that
+     * SwingAppenderUI is a Singleton using a doule checked locking mechanism.
+     * @return An instance of SwingAppenderUI
      */
     public static SwingAppenderUI getInstance() {
         if (instance == null) {
-            instance = new SwingAppenderUI();
+        	synchronized(SwingAppenderUI.class) {
+        		if(instance == null) {
+        			instance = new SwingAppenderUI();
+        		}
+        	}
         }
         return instance;
     }
     
-	/**Initializes the object
+	/**
+	 * Private constructer to ensure that this object cannot e instantiated
+	 * from outside this class.
 	 */
 	private SwingAppenderUI() {
 		//set internal attributes
@@ -74,6 +78,7 @@ public class SwingAppenderUI {
 		jframe = new JFrame();
 		jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
+		//initialize buttons
 		initButtonsPanel();
 		
 		//create text area to hold the log messages
@@ -106,11 +111,7 @@ public class SwingAppenderUI {
             logMessagesDisp.setCaretPosition(logMessagesDisp.getText().length());
 		}
 		else if(appState == PAUSED){
-			System.out.println("Sending log msg to buffer");
 			logBuffer.add(log);
-		}
-		else {
-			System.out.println("Not accepting any log statements");
 		}
 	}
 	
@@ -165,7 +166,6 @@ public class SwingAppenderUI {
 				appState = STARTED;
 			}
 			else if(srcButton.getText().equals(PAUSE)) {
-				System.out.println("setting dispMsg to false");
 				appState = PAUSED;
 				srcButton.setText(START);
 			}
