@@ -23,7 +23,7 @@
 	    <mkdir dir="${dist}/lib"/>
 
     	<!-- Put everything in ${build} into the SwingAppender.jar file -->
-	    <jar jarfile="${dist}/lib/SwingAppender.jar" basedir="${build}"/>
+	    <jar jarfile="${dist}/lib/log4j-swing-appender.jar" basedir="${build}" excludes="**/test/*.class"/>
 	</target>
 
 	<target name="clean" description="clean up" >
