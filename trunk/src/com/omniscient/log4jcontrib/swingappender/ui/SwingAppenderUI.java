@@ -55,6 +55,7 @@ public class SwingAppenderUI {
      * @return An instance of SwingAppenderUI
      */
     public static SwingAppenderUI getInstance() {
+    	System.out.println("getting UI Instance");
         if (instance == null) {
         	synchronized(SwingAppenderUI.class) {
         		if(instance == null) {
