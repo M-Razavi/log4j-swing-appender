@@ -19,7 +19,9 @@ public class SwingAppenderUITest {
 		//test
 		for(int i=0;;i++) {
 			try {Thread.sleep(100);} catch(InterruptedException ie) {}
-			loggerWin.doLog("message " + i);
+			//A log string always ends with a newline character. Hence we add
+			//one here manually to simulate similar output
+			loggerWin.doLog("message message message message " + i + "\n");
 		}
 	}
 }
