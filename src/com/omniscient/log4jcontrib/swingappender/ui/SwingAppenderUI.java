@@ -4,6 +4,7 @@
 package com.omniscient.log4jcontrib.swingappender.ui;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
@@ -15,7 +16,16 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JTextPane;
 import javax.swing.ScrollPaneConstants;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultHighlighter;
+import javax.swing.text.Highlighter;
+import javax.swing.text.Style;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyleContext;
+import javax.swing.text.StyledDocument;
 
 /** Creates a UI to display log messages from a SwingAppender
  * @author pshah
@@ -27,8 +37,10 @@ public class SwingAppenderUI {
 	private JButton startPause; //button for start/pause - toggles
 	private JButton stop; //stop button
     private JButton clear; //button to clear the text area
+    private JButton search; //search button
+    private JTextField searchField; //search field
 	private JPanel buttonsPanel; //panel to hold all buttons
-	private JTextArea logMessagesDisp; //display area
+	private JTextPane logMessagesDisp; //display area
 	private JScrollPane scrollPane;
 	//buffer to hold log statements when the UI is set to PAUSE
 	private List logBuffer; 
@@ -36,6 +48,8 @@ public class SwingAppenderUI {
 	private int appState;
 
 	/* Constants */
+	public static final String STYLE_REGULAR = "regular";
+	public static final String STYLE_HIGHLIGHTED = "highlighted";
 	public static final String START = "start";
 	public static final String PAUSE = "pause";
 	public static final String STOP = "stop";
@@ -88,7 +102,7 @@ public class SwingAppenderUI {
 		//add components to the contentPane
 		jframe.getContentPane().add(BorderLayout.NORTH, buttonsPanel);
 		jframe.getContentPane().add(BorderLayout.CENTER, scrollPane);
-		jframe.setSize(300,600);
+		jframe.setSize(800,600);
 		jframe.setVisible(true);
 	}
 	
@@ -99,17 +113,20 @@ public class SwingAppenderUI {
 	 */
 	public void doLog(String log) {
 		if(appState == STARTED) {
+			try {
+			StyledDocument sDoc = logMessagesDisp.getStyledDocument();
 			if(!logBuffer.isEmpty()) {
 				System.out.println("flushing buffer");
 				Iterator iter = logBuffer.iterator();
-				while(iter.hasNext()) {
-					logMessagesDisp.append((String)iter.next()+"\n");
+				while(iter.hasNext()) {					
+					sDoc.insertString(0, (String)iter.next(), sDoc.getStyle(STYLE_REGULAR));			
 					iter.remove();
 				}
+			}			
+			sDoc.insertString(0, log, sDoc.getStyle(STYLE_REGULAR));
+			} catch(BadLocationException ble) {
+				System.out.println("Bad Location Exception : " + ble.getMessage());
 			}
-			logMessagesDisp.append(log+"\n");
-            //Code to set the scrollbar always at the bottom 
-            logMessagesDisp.setCaretPosition(logMessagesDisp.getText().length());
 		}
 		else if(appState == PAUSED){
 			logBuffer.add(log);
@@ -136,18 +153,35 @@ public class SwingAppenderUI {
                 logMessagesDisp.setText("");
             }
         });
+        
+        searchField = new JTextField(25);
+        search = new JButton("Search");
+        search.addActionListener(new SearchActionListener());
 		buttonsPanel.add(startPause);
 		buttonsPanel.add(stop);
         buttonsPanel.add(clear);
+        buttonsPanel.add(searchField);
+        buttonsPanel.add(search);
+        
+        
 	}
 
 	/**Creates a scrollable text area
 	 */
 	private void initMessageDispArea() {
-		logMessagesDisp = new JTextArea();
+		logMessagesDisp = new JTextPane();
 		scrollPane = new JScrollPane(logMessagesDisp);
 		scrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 		scrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+		//add styles
+		StyledDocument sDoc = logMessagesDisp.getStyledDocument();
+		Style def = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);		
+		Style s1 = sDoc.addStyle(STYLE_REGULAR, def);
+		StyleConstants.setFontFamily(def, "SansSerif");
+		
+		Style s2 = sDoc.addStyle(STYLE_HIGHLIGHTED, s1);
+		StyleConstants.setBackground(s2, Color.BLUE);
+		
 	}
 	
 	/**************** inner classes *************************/
@@ -171,6 +205,45 @@ public class SwingAppenderUI {
 				srcButton.setText(START);
 			}
 		}
+	}
+	
+	class SearchActionListener implements ActionListener {
+
+		public void actionPerformed(ActionEvent evt) {
+			JButton srcButton = (JButton)evt.getSource();
+			if(!"Search".equals(srcButton.getText())) {
+				return;
+			}
+			System.out.println("Highlighting search results");
+			String searchTerm = searchField.getText();
+			String allLogText = logMessagesDisp.getText();
+			int startIndex = 0;
+			int selectionIndex=-1;
+			Highlighter hLighter = logMessagesDisp.getHighlighter();
+			//clear all previous highlightes
+			hLighter.removeAllHighlights();
+			DefaultHighlighter.DefaultHighlightPainter highlightPainter = new DefaultHighlighter.DefaultHighlightPainter(Color.BLUE);
+			while((selectionIndex = allLogText.indexOf(searchTerm, startIndex)) != -1) {
+				startIndex = selectionIndex + searchTerm.length();
+				try {
+					int newLines = getNumberOfNewLinesTillSelectionIndex(allLogText, selectionIndex);
+					hLighter.addHighlight(selectionIndex-newLines, (selectionIndex+searchTerm.length()-newLines), highlightPainter);
+				} catch(BadLocationException ble) {
+					System.out.println("Bad Location Exception: " + ble.getMessage());							
+				}
+			}
+		}
+
+		private int getNumberOfNewLinesTillSelectionIndex(String allLogText, int selectionIndex) {
+			int numberOfNewlines = 0;
+			int pos = 0;
+			while((pos = allLogText.indexOf("\n", pos))!=-1 && pos <= selectionIndex) {
+				numberOfNewlines++;
+				pos++;
+			}
+			return numberOfNewlines;
+		}
+		
 	}
 	
 	public void close() {
