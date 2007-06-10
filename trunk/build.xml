@@ -3,12 +3,12 @@
 		build file for SwingAppender
 	</description>
 	<!-- set global properties for this build -->
-	<property name="src" location="src"/>
-	<property name="build" location="build"/>
-	<property name="dist"  location="dist"/>
+	<property name="src" location="${basedir}/src"/>
+	<property name="build" location="${basedir}/build"/>
+	<property name="dist"  location="${basedir}/dist"/>
 	<property name="lib" value="${basedir}/lib"/>
 	
-	<target name="compile" description="compile the source " >
+	<target name="compile" depends="clean" description="compile the source " >
   		<mkdir dir="${build}"/>
 	    <!-- Compile the java code from ${src} into ${build} -->
     	<javac srcdir="${src}" destdir="${build}">
@@ -20,10 +20,10 @@
 
 	<target name="dist" depends="compile" description="generate the distribution" >
     	<!-- Create the distribution directory -->
-	    <mkdir dir="${dist}/lib"/>
+	    <mkdir dir="${dist}"/>
 
     	<!-- Put everything in ${build} into the SwingAppender.jar file -->
-	    <jar jarfile="${dist}/lib/log4j-swing-appender.jar" basedir="${build}" excludes="**/test/*.class"/>
+	    <jar jarfile="${dist}/log4j-swing-appender.jar" basedir="${build}" excludes="**/test/*.class"/>
 	</target>
 
 	<target name="clean" description="clean up" >
