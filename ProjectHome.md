@@ -1,0 +1,1 @@
+This is a Swing appender for the log4j logging library. It accepts log events from log4j and displays them in a Java Swing window.
